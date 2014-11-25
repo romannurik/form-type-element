@@ -1,0 +1,31 @@
+{
+  "name": "form-type-element",
+  "version": "0.0.1",
+  "authors": [
+    "Roman Nurik <roman@nurik.net>"
+  ],
+  "description": "A Polymer element that renders static or animated FORM type.",
+  "keywords": [
+    "polymer",
+    "web-components",
+    "web-component",
+    "FORM"
+  ],
+  "main": "form-type.html",
+  "license": "Apache2",
+  "homepage": "https://github.com/romannurik/form-type-element",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

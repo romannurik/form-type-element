@@ -1,0 +1,96 @@
+<!--
+  Copyright 2014 Google Inc.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<script src="scripts/formface.js"></script>
+
+<polymer-element name="form-type" attributes="color1 color2 color3 letterheight">
+  <template></template>
+  <script>
+    Polymer({
+      ready: function() {
+      },
+      attached: function() {
+        this.update_();
+        // Start watching.
+        this.onMutation(this, this.childrenUpdated);
+      },
+      childrenUpdated: function(observer, mutations) {
+        this.update_();
+        // Continue watching.
+        this.onMutation(this, this.childrenUpdated);
+      },
+      color1: formFace.THEME_DEFAULT.color1,
+      color2: formFace.THEME_DEFAULT.color2,
+      color3: formFace.THEME_DEFAULT.color3,
+      letterheight: 72,
+      color1Changed: function() { this.update_(); },
+      color2Changed: function() { this.update_(); },
+      color3Changed: function() { this.update_(); },
+      letterheightChanged: function() { this.update_(); },
+      update_: function() {
+        this.job('collapseupdates', function() {
+          this.foo = this.textContent;
+          this.theme = {
+            colorbg: 'transparent',
+            color1: this.color1,
+            color2: this.color2,
+            color3: this.color3
+          };
+          this.theme.colorbg = 'transparent';
+          this.typeInstance = formFace.createInstance(collapseWhitespace(this.textContent), {
+            theme: this.theme,
+            letterHeight: this.letterheight,
+            densityMultiplier: window.devicePixelRatio
+          });
+          this.canvas = this.typeInstance.getCanvas();
+          this.canvas.style.marginLeft =
+          this.canvas.style.marginTop =
+          this.canvas.style.marginRight =
+          this.canvas.style.marginBottom =
+              -(this.typeInstance._padding / window.devicePixelRatio) + 'px';
+
+          while (this.shadowRoot.firstChild) {
+            this.shadowRoot.removeChild(this.shadowRoot.firstChild);
+          }
+          this.shadowRoot.appendChild(this.canvas);
+          this.typeInstance.draw();
+        }, 0);
+      },
+      startTime: 0,
+      play: function() {
+        this.startTime = Number(new Date());
+        this.drawLoop_();
+      },
+      drawLoop_: function() {
+        var now = Number(new Date());
+        this.typeInstance.setTime(now - this.startTime);
+        this.typeInstance.draw();
+        if (now - this.startTime < this.typeInstance.getEndTime()) {
+          var me = this;
+          requestAnimationFrame(function() {
+            me.drawLoop_();
+          });
+        }
+      }
+    });
+
+    function collapseWhitespace(s) {
+      return (s || '').replace(/^\s+/g, '').replace(/\s+$/g, '');
+    }
+  </script>
+</polymer-element>
